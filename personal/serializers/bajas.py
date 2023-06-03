@@ -2,7 +2,7 @@ from rest_framework import serializers
 from sucursal.models.sucursal import Sucursal
 from personal.models.personas import Personal
 
-from ..models import BajaPersonal
+from personal.models.bajas import BajaPersonal
 
 from .personas import PersonalSerializer
 from sucursal.serializers.sucursal import SucursalSerializer

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from sucursal.models.sucursal import Sucursal
-from ..models import Redes
+from sucursal.models.redes import Redes
 from .sucursal import SucursalSerializer
 
 

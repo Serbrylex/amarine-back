@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Questionario
+from questionario.models.questionario import Questionario
 
 class QuestionarioSerializer(serializers.ModelSerializer):
     class Meta:

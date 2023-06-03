@@ -2,52 +2,69 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
 
 from .models.personas import Personal
 from .models.altas import AltaPersonal
 from .models.bajas import BajaPersonal
 
-from .serializers.personas import PersonalSerializer
-from .serializers.lista import PaseListaSerializer
+from .serializers.personas import PersonalSerializer, UserSerializer
+from .serializers.lista import PaseListaSerializer, PaseListaCreateSerializer
 from .serializers.altas import AltaPersonalSerializer
 from .serializers.bajas import BajaPersonalSerializer
 
 class LoginView(APIView):
-    def post(self, request):
-        serializer = PersonalSerializer(data=request.data)
+    permission_classes = [IsAuthenticated]
 
-        if serializer.is_valid():
-            username = serializer.validated_data['usuario']['username']
-            password = serializer.validated_data['usuario']['password']
+    def post(self, request):
+
+        if 'email' in request.data and 'password' in request.data:
+            email = request.data['email']
+            password = request.data['password']
             
             # Autenticar al usuario
-            user = authenticate(request, username=username, password=password)
+            user = authenticate(request, email=email, password=password)
 
             if user is not None:
                 # El usuario se autenticó correctamente
-                return Response({'detail': 'Inicio de sesión exitoso'}, status=status.HTTP_200_OK)
+                
+                personal = Personal.objects.get(usuario=user)
+                token, _ = Token.objects.get_or_create(user=user)
+                data = {
+                    'state': True,
+                    'detail': 'Inicio de sesión exitoso',
+                    'usuario': PersonalSerializer(personal).data,
+                    'token': token.key
+                }
+                return Response(data, status=status.HTTP_200_OK)
             else:
                 # El usuario no se pudo autenticar
                 return Response({'detail': 'Credenciales inválidas'}, status=status.HTTP_401_UNAUTHORIZED)
         else:
             # Los datos de entrada no son válidos
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'Wrong data'}, status=status.HTTP_400_BAD_REQUEST)
         
 
 class SendListaView(APIView):
-    def post(self, request):
-        serializer = PaseListaSerializer(data=request.data, many=True)
+    permission_classes = [IsAuthenticated]
 
+    def post(self, request):
+        serializer = PaseListaCreateSerializer(data=request.data, many=True)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            data = serializer.save()
+            res = PaseListaSerializer(data=data, many=True)
+            res.is_valid()
+            return Response(res.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PersonalListView(APIView):
-    def get(self, request, username=None):
-        if (username):
-            personal = Personal.objects.filter(usuario__username=username) 
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, email=None):
+        if (email):
+            personal = Personal.objects.filter(usuario__email=email) 
         else:
             personal = Personal.objects.all()
 
@@ -59,6 +76,8 @@ class PersonalListView(APIView):
     
 
 class BajaListView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         bajas = BajaPersonal.objects.all()
 
@@ -70,6 +89,8 @@ class BajaListView(APIView):
     
 
 class AltaListView(APIView):
+    permission_classes = [IsAuthenticated]
+    
     def get(self, request):
         altas = AltaPersonal.objects.all()
 

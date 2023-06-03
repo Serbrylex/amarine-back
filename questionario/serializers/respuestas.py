@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from ..models import Respuestas
-from questionario.models import Questionario
+from questionario.models.respuestas import Respuestas
+from questionario.models.questionario import Questionario
 from .questionario import QuestionarioSerializer
 
 
