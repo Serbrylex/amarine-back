@@ -177,13 +177,13 @@ def eachUserResolveQuestionario():
 # exec(open('initialData/script.py').read())
 def main():
     # Crea las sucursales y los registros de redes sociales
-    # sucursales = createSucursales()
+    sucursales = createSucursales()
 
     # Crea todos los usuarios, empleados, listas, altas y bajas
-    # create_all_employis(sucursales)
+    create_all_employis(sucursales)
 
     # Crea el unico questionario que existe
-    # createQuestionario()
+    createQuestionario()
 
     # Hace que todos los usuarios respondan una encuesta
     eachUserResolveQuestionario()
