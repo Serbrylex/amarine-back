@@ -27,7 +27,7 @@ def create_all_employis(sucursales):
         )
 
         personal = Personal.objects.create(
-            usuario=user, sucursal=random_sucursal, phone_number=fake.phone_number()
+            usuario=user, sucursal=random_sucursal, phone_number=random.randint(1000000000, 9999999999)
         )
 
         print(f'Usuario {user.first_name}, creado')
@@ -61,7 +61,7 @@ def create_all_employis(sucursales):
         for x in range(1, dias_trabajados):
             PaseLista.objects.create(
                 personal=personal,
-                asistio= random.randint(0, 10) == 0 if False else True,
+                asistio=random.randint(0, 10) == 0 if False else True,
                 fecha=aux_date
             )
             aux_date = aux_date + timedelta(days=1)
@@ -115,8 +115,8 @@ def createSucursales():
 
 
 def createQuestionario():
-    questionario = Questionario.objects.create(nombre='Questionario 360°')
     print(f'Creando el questionari 360°')
+    questionario = Questionario.objects.create(nombre='Questionario 360°')
     with open('initialData/preguntas360.csv', encoding='utf-8') as csv_file:
 
         csv_reader = csv.reader(csv_file, delimiter=',')

@@ -7,7 +7,7 @@ from sucursal.serializers.sucursal import SucursalSerializer
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ['__all__']  # Puedes incluir otros campos del modelo User si lo deseas
+        fields = '__all__'  # Puedes incluir otros campos del modelo User si lo deseas
         # exclude = ['password']
 
 
