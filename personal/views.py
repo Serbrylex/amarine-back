@@ -23,7 +23,6 @@ class LoginView(APIView):
             password = request.data['password']
             
             # Autenticar al usuario
-            import pdb; pdb.set_trace()
             user = authenticate(request, email=email, password=password)
 
             if user is not None:
