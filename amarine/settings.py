@@ -93,7 +93,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'amarine.wsgi.application'
+WSGI_APPLICATION = 'amarine.wsgi.app'
 
 
 # Users & Authentication
