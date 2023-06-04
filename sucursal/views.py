@@ -14,7 +14,7 @@ from .serializers.redes import RedesSerializer
 class SucursalView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, id):
+    def get(self, request, id=None):
 
         if id:
             sucursal = Sucursal.objects.filter(pk=id)
@@ -26,6 +26,7 @@ class SucursalView(APIView):
             return Response({'detail': 'No se encontraron datos'}, status=status.HTTP_404_NOT_FOUND)
         
         serializer = SucursalSerializer(data=sucursal, many=True)
+        serializer.is_valid()
         
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -33,7 +34,7 @@ class SucursalView(APIView):
 class RedesView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, id):
+    def get(self, request, id=None):
 
         # Acá va lógica perronaajsd flkashflkashfkasjhksejhf
 
