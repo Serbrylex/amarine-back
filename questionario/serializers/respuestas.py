@@ -5,11 +5,10 @@ from .questionario import QuestionarioSerializer
 
 
 class RespuestasSerializer(serializers.ModelSerializer):
-    questionario = QuestionarioSerializer()
 
     class Meta:
         model = Respuestas
-        fields = ['questionario', 'respuesta', 'porcentaje']
+        fields = ['pk', 'respuesta', 'porcentaje']
 
     def create(self, validated_data):
         questionario_data = validated_data.pop('questionario')

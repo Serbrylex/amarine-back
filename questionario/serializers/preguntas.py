@@ -9,7 +9,7 @@ class PreguntasSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Preguntas
-        fields = ['questionario', 'pregunta']
+        fields = ['pregunta']
 
     def create(self, validated_data):
         questionario_data = validated_data.pop('questionario')

@@ -47,5 +47,6 @@ class RedesView(APIView):
             return Response({'detail': 'No se encontraron datos'}, status=status.HTTP_404_NOT_FOUND)
         
         serializer = RedesSerializer(data=redes, many=True)
+        serializer.is_valid()
         
         return Response(serializer.data, status=status.HTTP_200_OK)

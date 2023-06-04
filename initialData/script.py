@@ -1,12 +1,35 @@
 from faker import Faker
 import csv
 import random
-from datetime import datetime, timedelta
+from datetime import timedelta, date
+from django.contrib.auth.hashers import make_password
 
 
 fake = Faker()
 EMPLEADOS_LIMIT = 10
 
+
+def create_personal_user():
+    user = User.objects.create(
+        email='luis@gmail.com', password=make_password('luis123'), first_name='luis', 
+        last_name='segovia', username='luiss', date_joined=timezone.now()
+    )
+
+    personal = Personal.objects.create(
+        usuario=user, sucursal=Sucursal.objects.all()[0], phone_number=random.randint(1000000000, 9999999999)
+    )
+
+    user = User.objects.create(
+        email='smadrid@gmail.com', password=make_password('hola123'), first_name='sergio', 
+        last_name='madrid', username='serbrylex', date_joined=timezone.now()
+    )
+
+    personal = Personal.objects.create(
+        usuario=user, sucursal=Sucursal.objects.all()[0], phone_number=random.randint(1000000000, 9999999999)
+    )
+
+    token = Token.objects.get_or_create(user=user)
+    print(token)
 
 def diferencia_dias(fecha1, fecha2):
     return (fecha1 - fecha2).days
@@ -22,7 +45,7 @@ def create_all_employis(sucursales):
         )
 
         user = User.objects.create(
-            email=fake.email(), password=fake.password(), first_name=fake.first_name(), 
+            email=fake.email(), password=make_password(fake.password()), first_name=fake.first_name(), 
             last_name=fake.last_name(), username=fake.name(), date_joined=fecha_de_ingreso
         )
 
@@ -104,12 +127,22 @@ def createSucursales():
         )
         sucursales.append(suc)
 
-        date = timezone.make_aware(fake.date_time(), timezone.get_current_timezone())
+        for month in range(1, 13):
+            # Obtener una fecha aleatoria en un mes específico
+            day = fake.random_int(min=1, max=28)  # Puedes ajustar el rango según tus necesidades
 
-        Redes.objects.create(
-            sucursal=suc, red_name=REDES[random.randint(0, len(REDES)-1)],
-            fecha=date, cantidad=random.randint(30, 200)
-        )
+            given_date = date(2023, month, day)  # The given date you want to create a timezone-aware datetime object for
+            timezone_obj = timezone.get_current_timezone()  # Get the current timezone of your Django project
+
+            timezone_aware_datetime = timezone.make_aware(
+                timezone.datetime.combine(given_date, timezone.datetime.min.time()),
+                timezone_obj
+            )
+
+            Redes.objects.create(
+                sucursal=suc, red_name=REDES[random.randint(0, len(REDES)-1)],
+                fecha=timezone_aware_datetime, cantidad=random.randint(30, 200)
+            )
     
     return sucursales
 
@@ -146,7 +179,7 @@ def createQuestionario():
 
                 if total == 4:
                     Respuestas.objects.create(
-                        questionario=questionario, respuesta=row[3], 
+                        questionario=questionario, respuesta=row[4], 
                         porcentaje=100, pregunta=pregunta
                     )   
             line_count += 1
@@ -174,6 +207,30 @@ def eachUserResolveQuestionario():
             )
         print(f'El usuario {x.usuario.first_name} obtuvo un puntuaje de {resultado}')
 
+def loadSocialData():
+    REDES = ['Facebook', 'Instagram', 'Tiktok']
+
+    print('Creando Social Data')
+    sucursales = Sucursal.objects.all()
+
+    for suc in sucursales:
+        for month in range(1, 13):
+            # Obtener una fecha aleatoria en un mes específico
+            day = fake.random_int(min=1, max=28)  # Puedes ajustar el rango según tus necesidades
+
+            given_date = date(2023, month, day)  # The given date you want to create a timezone-aware datetime object for
+            timezone_obj = timezone.get_current_timezone()  # Get the current timezone of your Django project
+
+            timezone_aware_datetime = timezone.make_aware(
+                timezone.datetime.combine(given_date, timezone.datetime.min.time()),
+                timezone_obj
+            )
+
+            Redes.objects.create(
+                sucursal=suc, red_name=REDES[random.randint(0, len(REDES)-1)],
+                fecha=timezone_aware_datetime, cantidad=random.randint(30, 200)
+            )
+
 # exec(open('initialData/script.py').read())
 def main():
     # Crea las sucursales y los registros de redes sociales
@@ -187,3 +244,6 @@ def main():
 
     # Hace que todos los usuarios respondan una encuesta
     eachUserResolveQuestionario()
+
+    # Create personal user
+    create_personal_user()

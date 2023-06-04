@@ -4,4 +4,4 @@ from questionario.models.questionario import Questionario
 class QuestionarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Questionario
-        fields = ['nombre']
+        fields = '__all__'
