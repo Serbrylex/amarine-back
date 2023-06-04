@@ -15,7 +15,6 @@ from .serializers.altas import AltaPersonalSerializer
 from .serializers.bajas import BajaPersonalSerializer
 
 class LoginView(APIView):
-    permission_classes = [IsAuthenticated]
 
     def post(self, request):
 
