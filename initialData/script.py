@@ -6,8 +6,19 @@ from django.contrib.auth.hashers import make_password
 
 
 fake = Faker()
-EMPLEADOS_LIMIT = 10
+EMPLEADOS_LIMIT = 100
 
+def create_test_users():
+    nombres = ['naudy', 'amarine']
+    for x in nombres:
+        user = User.objects.create(
+            email=f'{x}@gmail.com', password=make_password(f'{x}123'), first_name=x, 
+            last_name=x, username=x, date_joined=timezone.now()
+        )
+
+        personal = Personal.objects.create(
+            usuario=user, sucursal=Sucursal.objects.all()[0], phone_number=random.randint(1000000000, 9999999999)
+        )
 
 def create_personal_user():
     user = User.objects.create(
@@ -55,7 +66,7 @@ def create_all_employis(sucursales):
 
         print(f'Usuario {user.first_name}, creado')
 
-        if random.randint(0, 10) == 0:
+        if random.randint(0, 10) in [0, 1, 2, 3]:
             AltaPersonal.objects.create(
                 personal=personal, sucursal=random_sucursal, fecha=fecha_de_ingreso
             )
@@ -84,7 +95,7 @@ def create_all_employis(sucursales):
         for x in range(1, dias_trabajados):
             PaseLista.objects.create(
                 personal=personal,
-                asistio=random.randint(0, 10) == 0 if False else True,
+                asistio=random.randint(0, 10) in [0, 1 , 2, 3] if False else True,
                 fecha=aux_date
             )
             aux_date = aux_date + timedelta(days=1)
@@ -157,7 +168,7 @@ def createQuestionario():
 
         print('Creando las preguntas y las posibles respuestas con su porcentaje correspondiente')
         for row in csv_reader:
-            if line_count != 0:
+            if line_count != 0 and len(row[0]) > 0:
                 pregunta = Preguntas.objects.create(
                     questionario=questionario, pregunta=row[0]
                 )

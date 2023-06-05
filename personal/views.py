@@ -63,9 +63,9 @@ class PersonalListView(APIView):
 
     def get(self, request, email=None):
         if (email):
-            personal = Personal.objects.filter(usuario__email=email) 
+            personal = Personal.objects.filter(usuario__email=email, is_active=True)
         else:
-            personal = Personal.objects.all()
+            personal = Personal.objects.filter(is_active=True)
 
         if len(personal) == 0:
             return Response({'detail': 'No se encontraron datos'}, status=status.HTTP_404_NOT_FOUND)
